@@ -1,0 +1,18 @@
+SELECT   H.HACKER_ID,
+         H.NAME
+    FROM (SELECT   S.HACKER_ID,
+                   COUNT (S.CHALLENGE_ID) MAX_SCORES
+              FROM HACKERS H,
+                   DIFFICULTY D,
+                   CHALLENGES C,
+                   SUBMISSIONS S
+             WHERE D.DIFFICULTY_LEVEL = C.DIFFICULTY_LEVEL
+               AND C.CHALLENGE_ID = S.CHALLENGE_ID
+               AND H.HACKER_ID = S.HACKER_ID
+               AND S.SCORE = D.SCORE
+          GROUP BY S.HACKER_ID) TOTAL,
+         HACKERS H
+   WHERE TOTAL.HACKER_ID = H.HACKER_ID
+     AND MAX_SCORES > 1
+ORDER BY TOTAL.MAX_SCORES DESC,
+         H.HACKER_ID ASC;
