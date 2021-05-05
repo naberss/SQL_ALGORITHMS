@@ -1,0 +1,15 @@
+SELECT   CASE
+           WHEN G.GRADE < 8 THEN NULL
+           ELSE S.NAME
+         END AS NAME,
+         G.GRADE,
+         S.MARKS
+    FROM STUDENTS S,
+         GRADES G
+   WHERE S.MARKS BETWEEN G.MIN_MARK AND G.MAX_MARK
+ORDER BY 2 DESC,
+         1 ASC,
+         CASE
+           WHEN G.GRADE BETWEEN 1 AND 7 THEN S.MARKS
+           ELSE NULL
+         END ASC;
