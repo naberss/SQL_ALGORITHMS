@@ -1,0 +1,42 @@
+WITH MAIN AS
+     (
+       SELECT CASE
+                WHEN OCCUPATION LIKE 'Doctor' THEN NAME
+                ELSE NULL
+              END AS DOCTOR,
+              CASE
+                WHEN OCCUPATION LIKE 'Professor' THEN NAME
+                ELSE NULL
+              END AS PROFESSOR,
+              CASE
+                WHEN OCCUPATION LIKE 'Actor' THEN NAME
+                ELSE NULL
+              END AS ACTOR,
+              CASE
+                WHEN OCCUPATION LIKE 'Singer' THEN NAME
+                ELSE NULL
+              END AS SINGER
+         FROM OCCUPATIONS)
+SELECT XTAB.DOCTOR,
+       XTAB2.PROFESSOR,
+       XTAB4.SINGER,
+       XTAB3.ACTOR
+  FROM (SELECT ROW_NUMBER () OVER (ORDER BY DOCTOR ASC) AS ORDEM,
+               DOCTOR
+          FROM MAIN) XTAB,
+       (SELECT ROW_NUMBER () OVER (ORDER BY PROFESSOR ASC) AS ORDEM,
+               PROFESSOR
+          FROM MAIN) XTAB2,
+       (SELECT ROW_NUMBER () OVER (ORDER BY ACTOR ASC) AS ORDEM,
+               ACTOR
+          FROM MAIN) XTAB3,
+       (SELECT ROW_NUMBER () OVER (ORDER BY SINGER ASC) AS ORDEM,
+               SINGER
+          FROM MAIN) XTAB4
+ WHERE XTAB.ORDEM = XTAB2.ORDEM
+   AND XTAB2.ORDEM = XTAB3.ORDEM
+   AND XTAB3.ORDEM = XTAB4.ORDEM
+   AND NOT (    XTAB.DOCTOR IS NULL
+            AND XTAB2.PROFESSOR IS NULL
+            AND XTAB3.ACTOR IS NULL
+            AND XTAB4.SINGER IS NULL);
