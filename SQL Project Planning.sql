@@ -1,0 +1,22 @@
+WITH XTAB2 AS
+     (SELECT XTAB.*,
+             ROWNUM AS SEQ
+        FROM (SELECT   PROJECTS.*
+                  FROM PROJECTS
+              ORDER BY END_DATE) XTAB)
+SELECT     CONNECT_BY_ROOT START_DATE,
+           XTAB2.END_DATE
+      FROM XTAB2
+     WHERE CONNECT_BY_ISLEAF = 1
+START WITH CASE
+             WHEN START_DATE != (SELECT ZTAB.END_DATE
+                                   FROM XTAB2 ZTAB
+                                  WHERE ZTAB.SEQ = XTAB2.SEQ - 1)
+              OR (SELECT ZTAB.END_DATE
+                    FROM XTAB2 ZTAB
+                   WHERE ZTAB.SEQ = XTAB2.SEQ - 1) IS NULL THEN 1
+             ELSE 0
+           END = 1
+CONNECT BY PRIOR END_DATE = START_DATE
+ORDER BY (XTAB2.END_DATE - CONNECT_BY_ROOT START_DATE) ASC,
+CONNECT_BY_ROOT START_DATE;
