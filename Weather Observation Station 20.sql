@@ -1,0 +1,11 @@
+SELECT   ROUND (S.LAT_N, 4)
+    FROM (SELECT COUNT (*) AS IDS
+            FROM STATION) COUNTS,
+         (SELECT   LAT_N
+              FROM STATION
+          ORDER BY LAT_N ASC) S
+GROUP BY IDS,
+         LAT_N,
+         ROWNUM
+  HAVING (IDS + 1) / 2 = ROWNUM
+ORDER BY ROWNUM;
